@@ -1,6 +1,3 @@
-// import path from "path";
-// import { __dirname } from "../helpers/path.mjs";
-// import * as ShopController from "../controllers/Shop.mjs";
 import * as AdminController from "../controllers/Admin.mjs";
 import express from "express";
 import { isAuth } from "../middleware/auth.mjs";

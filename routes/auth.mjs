@@ -1,6 +1,5 @@
 import express from "express";
 import { check, body } from "express-validator";
-// import {  body,  validationResult } from 'express-validator';
 import * as AuthController from "../controllers/Auth.mjs";
 import { User } from "../models/userModel.mjs";
 
@@ -18,10 +17,6 @@ router.post(
       .isEmail()
       .withMessage("Enter a valid email")
       .custom((value, { req }) => {
-        // if (value === "adamananda02@gmail.com")
-        //   throw new Error("This email is forbidden");
-        // return true;
-
         return User.findOne({ email: value }).then((userDoc) => {
           if (userDoc) {
             return Promise.reject("Email is already registered");

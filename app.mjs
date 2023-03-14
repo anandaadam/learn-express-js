@@ -39,13 +39,11 @@ app.use(flash());
 
 app.use((req, res, next) => {
   if (!req.session.user) {
-    // console.log("Hello 1");
     return next();
   }
 
   User.findById(req.session.user._id)
     .then((user) => {
-      // console.log("Hello 2");
       req.user = user;
       next();
     })

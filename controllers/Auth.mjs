@@ -15,26 +15,6 @@ let transport = nodemailer.createTransport({
   },
 });
 
-const transporter = nodemailer.createTransport(
-  sendgridTransport({
-    auth: {
-      api_key:
-        "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",
-    },
-  })
-);
-
-// const TOKEN = "736648edc3add13c96ccaf25ec6ffa3f";
-// const SENDER_EMAIL = "shop@node.com";
-// const RECIPIENT_EMAIL = "recipient@email.com";
-
-const client = new MailtrapClient({
-  token: "283e32349908e01ac5dc0819b3b27db3",
-});
-const sender = { name: "Mailtrap Test", email: "adamananda28@gmail.com" };
-
-// ------------------------------------------------- //
-
 const getLogin = (req, res, next) => {
   let message = req.flash("error");
   message.length > 0 ? (message = message[0]) : (message = null);
@@ -88,7 +68,6 @@ const postLogin = (req, res, next) => {
 const postSignup = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
-  const confirmPassword = req.body.confirmPassword;
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
@@ -113,20 +92,6 @@ const postSignup = (req, res, next) => {
     })
     .then((result) => {
       res.redirect("/login");
-      // return transporter.sendMail({
-      //   to: email,
-      //   from: "shop@node.com",
-      //   subject: "Success to Signup",
-      //   html: "<h1>Please login to enter the application.</h1>",
-      // });
-      // return client
-      //   .send({
-      //     from: sender,
-      //     to: [{ email: email }],
-      //     subject: "Hello from Mailtrap!",
-      //     text: "Welcome to Mailtrap Sending!",
-      //   })
-      //   .then(console.log, console.error);
       const message = {
         from: "shop@node.com", // Sender address
         to: email, // List of recipients
@@ -164,7 +129,6 @@ const getReset = (req, res, next) => {
 };
 
 const postReset = (req, res, next) => {
-  // return console.log("hello");
   crypto.randomBytes(32, (err, buffer) => {
     if (err) {
       console.log(err);
@@ -184,7 +148,6 @@ const postReset = (req, res, next) => {
         return user.save();
       })
       .then((result) => {
-        // return console.log(result);
         res.redirect("/");
         const message = {
           from: "shop@node.com", // Sender address
@@ -211,7 +174,6 @@ const getNewPassword = (req, res, next) => {
   const token = req.params.token;
   User.findOne({ resetToken: token, resetTokenExpiration: { $gt: Date.now() } })
     .then((user) => {
-      // return console.log(user);
       let message = req.flash("error");
       message.length > 0 ? (message = message[0]) : (message = null);
 

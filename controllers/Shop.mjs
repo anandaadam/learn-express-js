@@ -1,8 +1,6 @@
 import { Product } from "../models/productModel.mjs";
 import { User } from "../models/userModel.mjs";
 import { Order } from "../models/orderModel.mjs";
-// import { User } from "../models/userModel.mjs";
-// // import { Cart } from "../models/cartModel.mjs";
 
 const getProducts = (req, res, next) => {
   Product.find()
@@ -47,7 +45,6 @@ const getCart = async (req, res, next) => {
   await req.user
     .populate("cart.items.productId")
     .then((user) => {
-      // console.log(user.cart.items);
       const products = user.cart.items;
       res.render("shop/cart", {
         path: "/cart",
@@ -58,20 +55,6 @@ const getCart = async (req, res, next) => {
     })
     .catch((err) => console.log(err));
 };
-
-// const getCart = (req, res, next) => {
-//   req.user
-//     .populate({ path: "cart.items.productId" })
-//     .then((user) => {
-//       console.log(user.cart);
-//       res.render("shop/cart", {
-//         path: "/cart",
-//         pageTitle: "Your Cart",
-//         products: products.cart,
-//       });
-//     })
-//     .catch((error) => console.log(error));
-// };
 
 const postCart = (req, res, next) => {
   const productId = req.body.productId;
@@ -85,14 +68,11 @@ const postCart = (req, res, next) => {
 };
 
 const postCartDeleteProduct = (req, res, next) => {
-  // return console.log(req.user);
   const productId = req.body.productId;
-  // return console.log({ productId });
-  // const abc = req.user.deleteItemFromCart(productId);
-  // return console.log(abc);
+
   req.user
     .deleteItemFromCart(productId)
-    // .then((result) => console.log(result))
+
     .then((result) => res.redirect("/cart"))
     .catch((error) => console.log(error));
 };
@@ -101,7 +81,6 @@ const postOrders = async (req, res, next) => {
   await req.user
     .populate("cart.items.productId")
     .then((user) => {
-      // return console.log(user);
       const products = user.cart.items;
       return products.map((product) => {
         return {
@@ -139,27 +118,12 @@ const getOrders = (req, res, next) => {
     .catch((error) => console.log(error));
 };
 
-// const postOrders = (req, res, next) => {
-//   req.user
-//     .addOrder()
-//     .then((result) => res.redirect("/orders"))
-//     .catch((error) => console.log(error));
-// };
-
-// // const getCheckout = (req, res, next) => {
-// //   res.render("shop/checkout", {
-// //     path: "/checkout",
-// //     pageTitle: "Checkout",
-// //   });
-// // };
-
 export {
   getProducts,
   getProduct,
   getIndex,
   getCart,
   postCart,
-  //   //   getCheckout,
   getOrders,
   postOrders,
   postCartDeleteProduct,

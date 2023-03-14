@@ -10,7 +10,7 @@ const getAddProduct = function (req, res, next) {
   });
 };
 
-// // Get input from form add new product.
+// Get input from form add new product.
 const postAddProduct = function (req, res, next) {
   const title = req.body.title;
   const price = req.body.price;
@@ -92,7 +92,6 @@ const getProducts = function (req, res, next) {
 
 const postDeleteProduct = function (req, res, next) {
   const productId = req.body.productId;
-  // Product.findByIdAndRemove(productId)
   Product.deleteOne({ _id: productId, userId: req.user._id })
     .then(() => res.redirect("/admin/products"))
     .catch((error) => console.log(error));
