@@ -1,0 +1,41 @@
+[
+  { "title": "book" },
+  { "title": "earpod" },
+  { "title": "car" },
+  { "title": "camera", "price": "10000", "description": "Camera" },
+  {
+    "title": "New Camera",
+    "imageUrl": "https://images.unsplash.com/photo-1510127034890-ba27508e9f1c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8Y2FtZXJhfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=600&q=60",
+    "price": "200",
+    "description": "New Camera"
+  },
+  {
+    "id": 6661,
+    "title": "The New Camera",
+    "imageUrl": "https://images.unsplash.com/photo-1510127034890-ba27508e9f1c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8Y2FtZXJhfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=600&q=60",
+    "price": 300,
+    "description": "The New Camera"
+  },
+  { "title": "New Phone", "imageUrl": "", "price": "100", "description": "New Phone", "id": 0.8254715314553747 },
+  {
+    "id": 0.36157031428858555,
+    "title": "The New Camera",
+    "imageUrl": "https://images.unsplash.com/photo-1510127034890-ba27508e9f1c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8Y2FtZXJhfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=600&q=60",
+    "price": 300,
+    "description": "The New Camera 2022"
+  },
+  {
+    "id": 0.3138462783445166,
+    "title": "The New Camera",
+    "imageUrl": "https://images.unsplash.com/photo-1510127034890-ba27508e9f1c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8Y2FtZXJhfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=600&q=60",
+    "price": 300,
+    "description": "The New Camera!!!"
+  },
+  {
+    "id": 0.24408022769253646,
+    "title": "The New Camera",
+    "imageUrl": "https://images.unsplash.com/photo-1510127034890-ba27508e9f1c?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8M3x8Y2FtZXJhfGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=600&q=60",
+    "price": 300,
+    "description": "The New Camera -"
+  }
+]
