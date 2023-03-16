@@ -16,7 +16,7 @@ const app = express();
 const csrfProtection = csurf();
 const SessionStore = MongoDBStore(session);
 const store = new SessionStore({
-  uri: "USE YOUR MONGO ATLAS URI (I'M CONNECT THROUGH COMPASS)",
+  uri: "mongodb://adam:Pknqsx123.@ac-4st63nd-shard-00-00.myiaxw1.mongodb.net:27017,ac-4st63nd-shard-00-01.myiaxw1.mongodb.net:27017,ac-4st63nd-shard-00-02.myiaxw1.mongodb.net:27017/shop?replicaSet=atlas-10elfg-shard-0&ssl=true&authSource=admin",
   collection: "sessions",
 });
 
@@ -61,6 +61,8 @@ app.use(shopRoutes.router);
 app.use("/admin", adminRoutes.router);
 
 mongoose
-  .connect("USE YOUR MONGO ATLAS URI (I'M CONNECT THROUGH COMPASS)")
+  .connect(
+    "mongodb://adam:Pknqsx123.@ac-4st63nd-shard-00-00.myiaxw1.mongodb.net:27017,ac-4st63nd-shard-00-01.myiaxw1.mongodb.net:27017,ac-4st63nd-shard-00-02.myiaxw1.mongodb.net:27017/shop?replicaSet=atlas-10elfg-shard-0&ssl=true&authSource=admin"
+  )
   .then((result) => app.listen(3000))
   .catch((error) => console.log(error));
