@@ -9,7 +9,19 @@ router.get("/login", AuthController.getLogin);
 router.get("/signup", AuthController.getSignup);
 router.get("/reset", AuthController.getReset);
 router.get("/reset/:token", AuthController.getNewPassword);
-router.post("/login", AuthController.postLogin);
+router.post(
+  "/login",
+  [
+    body("email").isEmail().withMessage("Enter a valid email"),
+    body(
+      "password",
+      "Enter password with number and text between 8 and 16 characters"
+    )
+      .isLength({ min: 8, max: 16 })
+      .isAlphanumeric(),
+  ],
+  AuthController.postLogin
+);
 router.post(
   "/signup",
   [

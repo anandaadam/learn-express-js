@@ -39,11 +39,21 @@ const getSignup = (req, res, next) => {
 const postLogin = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    console.log(errors.array());
+    return res.status(422).render("auth/login", {
+      path: "/login",
+      pageTitle: "Login",
+      errorMessage: errors.array()[0].msg,
+    });
+  }
 
   User.findOne({ email: email })
     .then((user) => {
       if (!user) {
-        req.flash("error", "Invalid email or password");
+        req.flash("error", "Email is not found");
         return res.redirect("/login");
       }
       bcrypt
@@ -57,7 +67,7 @@ const postLogin = (req, res, next) => {
               res.redirect("/");
             });
           }
-          req.flash("error", "Invalid email or password");
+          req.flash("error", "Email and password not match");
           res.redirect("/login");
         })
         .catch((error) => console.log(error));
