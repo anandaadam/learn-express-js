@@ -12,13 +12,14 @@ router.get("/reset/:token", AuthController.getNewPassword);
 router.post(
   "/login",
   [
-    body("email").isEmail().withMessage("Enter a valid email"),
+    body("email").isEmail().withMessage("Enter a valid email").normalizeEmail(),
     body(
       "password",
       "Enter password with number and text between 8 and 16 characters"
     )
       .isLength({ min: 8, max: 16 })
-      .isAlphanumeric(),
+      .isAlphanumeric()
+      .trim(),
   ],
   AuthController.postLogin
 );
@@ -34,18 +35,22 @@ router.post(
             return Promise.reject("Email is already registered");
           }
         });
-      }),
+      })
+      .normalizeEmail(),
     body(
       "password",
       "Enter password with number and text between 8 and 16 characters"
     )
       .isLength({ min: 8, max: 16 })
-      .isAlphanumeric(),
-    body("confirmPassword").custom((value, { req }) => {
-      if (value !== req.body.password)
-        throw new Error("Password have to match");
-      return true;
-    }),
+      .isAlphanumeric()
+      .trim(),
+    body("confirmPassword")
+      .trim()
+      .custom((value, { req }) => {
+        if (value !== req.body.password)
+          throw new Error("Password have to match");
+        return true;
+      }),
   ],
   AuthController.postSignup
 );

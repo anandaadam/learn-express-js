@@ -26,6 +26,7 @@ const getLogin = (req, res, next) => {
       email: "",
       password: "",
     },
+    validationErrors: [],
   });
 };
 
@@ -42,6 +43,7 @@ const getSignup = (req, res, next) => {
       password: "",
       confirmPassword: "",
     },
+    validationErrors: [],
   });
 };
 
@@ -60,6 +62,7 @@ const postLogin = (req, res, next) => {
         email: email,
         password: password,
       },
+      validationErrors: errors.array(),
     });
   }
 
@@ -104,6 +107,7 @@ const postSignup = (req, res, next) => {
         password: password,
         confirmPassword: req.body.confirmPassword,
       },
+      validationErrors: errors.array(),
     });
   }
 
