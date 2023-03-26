@@ -1,5 +1,6 @@
 import { Product } from "../models/productModel.mjs";
 import { validationResult } from "express-validator";
+import mongoose from "mongoose";
 
 // Render for form add new product.
 const getAddProduct = function (req, res, next) {
@@ -10,12 +11,6 @@ const getAddProduct = function (req, res, next) {
     isAuthenticated: req.session.isLoggedIn,
     hasError: false,
     errorMessage: null,
-    // oldInput: {
-    //   title: "",
-    //   price: "",
-    //   description: "",
-    //   imageUrl: "",
-    // },
     validationErrors: [],
   });
 };
@@ -48,6 +43,7 @@ const postAddProduct = function (req, res, next) {
   }
 
   const product = new Product({
+    _id: new mongoose.Types.ObjectId("64041e047f90cad4a80c557d"),
     title: title,
     price: price,
     description: description,
@@ -60,7 +56,11 @@ const postAddProduct = function (req, res, next) {
       console.log("Created product was succes");
       res.redirect("/admin/products");
     })
-    .catch((error) => console.log(error));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 // Render for form edit product.
@@ -86,7 +86,11 @@ const getEditProduct = function (req, res, next) {
         validationErrors: [],
       });
     })
-    .catch((error) => console.log(error));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 const postEditProduct = function (req, res, next) {
@@ -129,7 +133,11 @@ const postEditProduct = function (req, res, next) {
 
       return product.save().then((result) => res.redirect("/admin/products"));
     })
-    .catch((error) => console.log(error));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 const getProducts = function (req, res, next) {
@@ -142,14 +150,22 @@ const getProducts = function (req, res, next) {
         isAuthenticated: req.session.isLoggedIn,
       })
     )
-    .catch((error) => console.log(error));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 const postDeleteProduct = function (req, res, next) {
   const productId = req.body.productId;
   Product.deleteOne({ _id: productId, userId: req.user._id })
     .then(() => res.redirect("/admin/products"))
-    .catch((error) => console.log(error));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 export {

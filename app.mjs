@@ -9,6 +9,7 @@ import { User } from "./models/userModel.mjs";
 import * as shopRoutes from "./routes/shop.mjs";
 import * as adminRoutes from "./routes/admin.mjs";
 import * as authRoutes from "./routes/auth.mjs";
+import * as errorHandle from "./controllers/Error.mjs";
 import csurf from "csurf";
 import flash from "connect-flash";
 
@@ -38,27 +39,39 @@ app.use(csrfProtection);
 app.use(flash());
 
 app.use((req, res, next) => {
-  if (!req.session.user) {
-    return next();
-  }
-
-  User.findById(req.session.user._id)
-    .then((user) => {
-      req.user = user;
-      next();
-    })
-    .catch((err) => console.log(er));
-});
-
-app.use((req, res, next) => {
   res.locals.isAuthenticated = req.session.isLoggedIn;
   res.locals.csrfToken = req.csrfToken();
   next();
 });
 
+app.use((req, res, next) => {
+  if (!req.session.user) return next();
+
+  User.findById(req.session.user._id)
+    .then((user) => {
+      if (!user) return next();
+      req.user = user;
+      next();
+    })
+    .catch((err) => {
+      next(new Error(err));
+    });
+});
+
 app.use(authRoutes.router);
 app.use(shopRoutes.router);
 app.use("/admin", adminRoutes.router);
+
+app.get("/500");
+app.use(errorHandle.error404Page);
+
+app.use((error, req, res, next) => {
+  res.status(500).render("500", {
+    pageTitle: "Error 500!",
+    path: "/500",
+    isAuthenticated: req.session.isLoggedIn,
+  });
+});
 
 mongoose
   .connect(
