@@ -12,6 +12,7 @@ import * as authRoutes from "./routes/auth.mjs";
 import * as errorHandle from "./controllers/Error.mjs";
 import csurf from "csurf";
 import flash from "connect-flash";
+import multer from "multer";
 
 const app = express();
 const csrfProtection = csurf();
@@ -20,12 +21,36 @@ const store = new SessionStore({
   uri: "mongodb://adam:Pknqsx123.@ac-4st63nd-shard-00-00.myiaxw1.mongodb.net:27017,ac-4st63nd-shard-00-01.myiaxw1.mongodb.net:27017,ac-4st63nd-shard-00-02.myiaxw1.mongodb.net:27017/shop?replicaSet=atlas-10elfg-shard-0&ssl=true&authSource=admin",
   collection: "sessions",
 });
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "images");
+  },
+  filename: (req, file, cb) => {
+    cb(null, new Date().getTime() + "-" + file.originalname);
+  },
+});
+
+const fileFilter = (req, file, cb) => {
+  if (
+    file.mimetype === "image/png" ||
+    file.mimetype === "image/jpg" ||
+    file.mimetype === "image/jpeg"
+  ) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+};
 
 app.set("view engine", "ejs");
 app.set("views", "views");
 
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(
+  multer({ storage: fileStorage, fileFilter: fileFilter }).single("image")
+);
 app.use(express.static(path.join(__dirname, "../", "public")));
+app.use("/images", express.static(path.join(__dirname, "../", "images")));
 app.use(
   session({
     secret: "the secret cookie",
@@ -62,10 +87,11 @@ app.use(authRoutes.router);
 app.use(shopRoutes.router);
 app.use("/admin", adminRoutes.router);
 
-app.get("/500");
+app.get("/500", errorHandle.error500Page);
 app.use(errorHandle.error404Page);
 
 app.use((error, req, res, next) => {
+  console.log(error);
   res.status(500).render("500", {
     pageTitle: "Error 500!",
     path: "/500",

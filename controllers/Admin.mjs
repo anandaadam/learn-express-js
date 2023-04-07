@@ -8,7 +8,6 @@ const getAddProduct = function (req, res, next) {
     pageTitle: "Add Product",
     path: "/admin/add-product",
     editing: false,
-    isAuthenticated: req.session.isLoggedIn,
     hasError: false,
     errorMessage: null,
     validationErrors: [],
@@ -20,8 +19,25 @@ const postAddProduct = function (req, res, next) {
   const title = req.body.title;
   const price = req.body.price;
   const description = req.body.description;
-  const imageUrl = req.body.imageUrl;
+  const image = req.file;
   const errors = validationResult(req);
+
+  if (!image) {
+    return res.status(422).render("admin/edit-product", {
+      pageTitle: "Add Product",
+      path: "/admin/add-product",
+      editing: false,
+      errorMessage: "File format is incorrect",
+      hasError: true,
+      product: {
+        title: title,
+        price: price,
+        description: description,
+        // imageUrl: imageUrl,
+      },
+      validationErrors: [],
+    });
+  }
 
   if (!errors.isEmpty()) {
     console.log(errors.array());
@@ -29,25 +45,24 @@ const postAddProduct = function (req, res, next) {
       pageTitle: "Add Product",
       path: "/admin/add-product",
       editing: false,
-      isAuthenticated: req.session.isLoggedIn,
       errorMessage: errors.array()[0].msg,
       hasError: true,
       product: {
         title: title,
         price: price,
         description: description,
-        imageUrl: imageUrl,
+        imageUrl: image,
       },
       validationErrors: errors.array(),
     });
   }
 
   const product = new Product({
-    _id: new mongoose.Types.ObjectId("64041e047f90cad4a80c557d"),
+    // _id: new mongoose.Types.ObjectId("64041e047f90cad4a80c557d"),
     title: title,
     price: price,
     description: description,
-    imageUrl: imageUrl,
+    imageUrl: image.path,
     userId: req.user,
   });
   product
@@ -80,7 +95,6 @@ const getEditProduct = function (req, res, next) {
         path: "/admin/edit-product",
         editing: editMode,
         product: product,
-        isAuthenticated: req.session.isLoggedIn,
         hasError: false,
         errorMessage: null,
         validationErrors: [],
@@ -98,7 +112,7 @@ const postEditProduct = function (req, res, next) {
   const updatedTitle = req.body.title;
   const updatedPrice = req.body.price;
   const updatedDescription = req.body.description;
-  const updatedImageUrl = req.body.imageUrl;
+  const updatedimage = req.file;
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
@@ -108,14 +122,12 @@ const postEditProduct = function (req, res, next) {
       path: "/admin/edit-product",
       editing: true,
       hasError: true,
-      isAuthenticated: req.session.isLoggedIn,
       errorMessage: errors.array()[0].msg,
       product: {
         _id: productId,
         title: updatedTitle,
         price: updatedPrice,
         description: updatedDescription,
-        imageUrl: updatedImageUrl,
       },
       validationErrors: errors.array(),
     });
@@ -129,7 +141,9 @@ const postEditProduct = function (req, res, next) {
       product.title = updatedTitle;
       product.price = updatedPrice;
       product.description = updatedDescription;
-      product.imageUrl = updatedImageUrl;
+      updatedimage
+        ? (product.imageUrl = updatedimage.path)
+        : (product.imageUrl = product.imageUrl);
 
       return product.save().then((result) => res.redirect("/admin/products"));
     })
@@ -147,7 +161,6 @@ const getProducts = function (req, res, next) {
         products: products,
         pageTitle: "Products",
         path: "/admin/products",
-        isAuthenticated: req.session.isLoggedIn,
       })
     )
     .catch((err) => {

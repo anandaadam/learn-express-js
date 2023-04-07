@@ -9,7 +9,6 @@ const getProducts = (req, res, next) => {
         products: products,
         pageTitle: "All Products",
         path: "/products",
-        isAuthenticated: req.session.isLoggedIn,
       });
     })
     .catch((error) => console.log(error));
@@ -23,7 +22,6 @@ const getProduct = (req, res, next) => {
         product: product,
         pageTitle: product.title,
         path: "/products",
-        isAuthenticated: req.session.isLoggedIn,
       });
     })
     .catch((error) => console.log(error));
@@ -50,7 +48,6 @@ const getCart = async (req, res, next) => {
         path: "/cart",
         pageTitle: "Your Cart",
         products: products,
-        isAuthenticated: req.session.isLoggedIn,
       });
     })
     .catch((err) => console.log(err));
@@ -112,7 +109,6 @@ const getOrders = (req, res, next) => {
         path: "/orders",
         pageTitle: "Your Orders",
         orders: orders,
-        isAuthenticated: req.session.isLoggedIn,
       });
     })
     .catch((error) => console.log(error));

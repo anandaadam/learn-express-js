@@ -19,12 +19,12 @@ router.post(
       .withMessage("Title must be string")
       .isLength({ min: 3, max: 100 })
       .withMessage("Input title with min 3 characters and max 100 characters"),
-    body("imageUrl")
-      //   .trim()
-      //   .isEmpty()
-      //   .withMessage("Image url is required")
-      .isURL()
-      .withMessage("Input valid image url"),
+    // body("imageUrl"),
+    //   .trim()
+    //   .isEmpty()
+    //   .withMessage("Image url is required")
+    // .isURL()
+    // .withMessage("Input valid image url"),
     body("price")
       //   .trim()
       //   .isEmpty()
@@ -54,12 +54,12 @@ router.post(
       .withMessage("Title must be alpha numeric")
       .isLength({ min: 3, max: 100 })
       .withMessage("Input title with min 3 characters and max 100 characters"),
-    body("imageUrl")
-      //   .trim()
-      //   .isEmpty()
-      //   .withMessage("Image url is required")
-      .isURL()
-      .withMessage("Input valid image url"),
+    // body("imageUrl"),
+    //   .trim()
+    //   .isEmpty()
+    //   .withMessage("Image url is required")
+    // .isURL()
+    // .withMessage("Input valid image url"),
     body("price")
       //   .trim()
       //   .isEmpty()

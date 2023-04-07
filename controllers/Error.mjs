@@ -3,9 +3,6 @@ const error404Page = function (req, res, next) {
     pageTitle: "Error 404!",
     path: "/",
     isAuthenticated: req.session.isLoggedIn,
-    // formCSS: true,
-    // productCSS: true,
-    // activeProduct: true,
   });
 };
 
