@@ -194,6 +194,24 @@ const postDeleteProduct = function (req, res, next) {
     });
 };
 
+const deleteProduct = function (req, res, next) {
+  const productId = req.params.productId;
+  Product.findById(productId)
+    .then((product) => {
+      if (!product) return next(new Error("Product not found"));
+
+      deleteFile(product.imageUrl);
+      return Product.deleteOne({ _id: productId, userId: req.user._id });
+    })
+    .then(() => {
+      console.log("Success to delete product");
+      res.status(200).json({ success: true });
+    })
+    .catch((err) => {
+      res.status(500).json({ success: false });
+    });
+};
+
 export {
   getAddProduct,
   postAddProduct,
@@ -201,4 +219,5 @@ export {
   getProducts,
   postEditProduct,
   postDeleteProduct,
+  deleteProduct,
 };
