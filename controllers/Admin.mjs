@@ -1,6 +1,7 @@
 import { Product } from "../models/productModel.mjs";
 import { validationResult } from "express-validator";
 import mongoose from "mongoose";
+import { deleteFile } from "../helpers/file.mjs";
 
 // Render for form add new product.
 const getAddProduct = function (req, res, next) {
@@ -141,10 +142,13 @@ const postEditProduct = function (req, res, next) {
       product.title = updatedTitle;
       product.price = updatedPrice;
       product.description = updatedDescription;
-      updatedimage
-        ? (product.imageUrl = updatedimage.path)
-        : (product.imageUrl = product.imageUrl);
 
+      if (updatedimage) {
+        deleteFile(product.imageUrl);
+        product.imageUrl = updatedimage.path;
+      }
+
+      console.log("Success to updated product");
       return product.save().then((result) => res.redirect("/admin/products"));
     })
     .catch((err) => {
@@ -172,8 +176,17 @@ const getProducts = function (req, res, next) {
 
 const postDeleteProduct = function (req, res, next) {
   const productId = req.body.productId;
-  Product.deleteOne({ _id: productId, userId: req.user._id })
-    .then(() => res.redirect("/admin/products"))
+  Product.findById(productId)
+    .then((product) => {
+      if (!product) return next(new Error("Product not found"));
+
+      deleteFile(product.imageUrl);
+      return Product.deleteOne({ _id: productId, userId: req.user._id });
+    })
+    .then(() => {
+      console.log("Success to delete product");
+      res.redirect("/admin/products");
+    })
     .catch((err) => {
       const error = new Error(err);
       error.httpStatusCode = 500;
