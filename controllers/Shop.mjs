@@ -6,16 +6,44 @@ import path from "node:path";
 import { __dirname } from "../helpers/path.mjs";
 import PDFDocument from "pdfkit";
 
+const itemPerPage = 1;
+
 const getProducts = (req, res, next) => {
+  const page = +req.query.page || 1;
+  let totalItems;
+
   Product.find()
-    .then((products) => {
-      res.render("shop/product-list", {
+    .countDocuments()
+    .then((document) => {
+      totalItems = document;
+      return Product.find()
+        .skip((page - 1) * itemPerPage)
+        .limit(itemPerPage);
+    })
+    .then((products) =>
+      res.render("shop/index", {
         products: products,
         pageTitle: "All Products",
         path: "/products",
-      });
-    })
+        currentPage: page,
+        hasNextPage: itemPerPage * page < totalItems,
+        hasPreviousPage: page > 1,
+        nextPage: page + 1,
+        previousPage: page - 1,
+        lastPage: Math.ceil(totalItems / itemPerPage),
+      })
+    )
     .catch((error) => console.log(error));
+
+  // Product.find()
+  //   .then((products) => {
+  //     res.render("shop/product-list", {
+  //       products: products,
+  //       pageTitle: "All Products",
+  //       path: "/products",
+  //     });
+  //   })
+  // .catch((error) => console.log(error));
 };
 
 const getProduct = (req, res, next) => {
@@ -32,12 +60,29 @@ const getProduct = (req, res, next) => {
 };
 
 const getIndex = (req, res, next) => {
+  const productId = req.params.productId;
+  const page = +req.query.page || 1;
+  let totalItems;
+
   Product.find()
+    .countDocuments()
+    .then((document) => {
+      totalItems = document;
+      return Product.find()
+        .skip((page - 1) * itemPerPage)
+        .limit(itemPerPage);
+    })
     .then((products) =>
       res.render("shop/index", {
         products: products,
         pageTitle: "Shop",
         path: "/",
+        currentPage: page,
+        hasNextPage: itemPerPage * page < totalItems,
+        hasPreviousPage: page > 1,
+        nextPage: page + 1,
+        previousPage: page - 1,
+        lastPage: Math.ceil(totalItems / itemPerPage),
       })
     )
     .catch((error) => console.log(error));
