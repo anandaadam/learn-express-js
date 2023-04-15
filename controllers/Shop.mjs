@@ -5,7 +5,9 @@ import * as fs from "node:fs";
 import path from "node:path";
 import { __dirname } from "../helpers/path.mjs";
 import PDFDocument from "pdfkit";
+import Stripe from "stripe";
 
+const stripe = new Stripe("ADD WITH YOUR SECRET KEY");
 const itemPerPage = 1;
 
 const getProducts = (req, res, next) => {
@@ -34,16 +36,6 @@ const getProducts = (req, res, next) => {
       })
     )
     .catch((error) => console.log(error));
-
-  // Product.find()
-  //   .then((products) => {
-  //     res.render("shop/product-list", {
-  //       products: products,
-  //       pageTitle: "All Products",
-  //       path: "/products",
-  //     });
-  //   })
-  // .catch((error) => console.log(error));
 };
 
 const getProduct = (req, res, next) => {
@@ -210,6 +202,81 @@ const getInvoice = (req, res, next) => {
     .catch((err) => next(new Error(err)));
 };
 
+const getCheckOut = (req, res, next) => {
+  let products;
+  let total = 0;
+
+  req.user
+    .populate("cart.items.productId")
+    .then((user) => {
+      products = user.cart.items;
+      total = 0;
+      products.forEach((p) => {
+        total += p.quantity * p.productId.price;
+      });
+
+      return stripe.checkout.sessions.create({
+        payment_method_types: ["card"],
+        mode: "payment",
+        line_items: products.map((p) => {
+          return {
+            quantity: p.quantity,
+            price_data: {
+              currency: "usd",
+              unit_amount: p.productId.price * 100,
+              product_data: {
+                name: p.productId.title,
+                description: p.productId.description,
+              },
+            },
+          };
+        }),
+        // customer_email: req.user.email,
+        success_url:
+          req.protocol + "://" + req.get("host") + "/checkout/success",
+        cancel_url: req.protocol + "://" + req.get("host") + "/checkout/cancel",
+      });
+    })
+    .then((session) => {
+      res.render("shop/checkout", {
+        path: "/checkout",
+        pageTitle: "Checkout",
+        products: products,
+        totalSum: total,
+        sessionId: session.id,
+      });
+    })
+    .catch((err) => console.log(err));
+};
+
+const getCheckOutSuccess = async (req, res, next) => {
+  await req.user
+    .populate("cart.items.productId")
+    .then((user) => {
+      const products = user.cart.items;
+      return products.map((product) => {
+        return {
+          quantity: product.quantity,
+          product: { ...product.productId._doc },
+        };
+      });
+    })
+    .then((products) => {
+      const order = new Order({
+        user: {
+          email: req.user.email,
+          userId: req.user,
+        },
+        products: products,
+      });
+
+      return order.save();
+    })
+    .then((orders) => req.user.clearCart())
+    .then((result) => res.redirect("/"))
+    .catch((err) => console.log(err));
+};
+
 export {
   getProducts,
   getProduct,
@@ -220,4 +287,6 @@ export {
   postOrders,
   postCartDeleteProduct,
   getInvoice,
+  getCheckOut,
+  getCheckOutSuccess,
 };
