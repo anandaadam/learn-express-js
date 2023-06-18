@@ -17,8 +17,9 @@ import multer from "multer";
 const app = express();
 const csrfProtection = csurf();
 const SessionStore = MongoDBStore(session);
+const MONGO_URI = `mongodb://${process.env.MONGO_USER}:${process.env.MONGO_PASSWORD}@ac-4st63nd-shard-00-00.myiaxw1.mongodb.net:27017,ac-4st63nd-shard-00-01.myiaxw1.mongodb.net:27017,ac-4st63nd-shard-00-02.myiaxw1.mongodb.net:27017/${process.env.MONGO_DEFAULT_DATABASE}?replicaSet=atlas-10elfg-shard-0&ssl=true&authSource=admin`;
 const store = new SessionStore({
-  uri: "mongodb://adam:Pknqsx123.@ac-4st63nd-shard-00-00.myiaxw1.mongodb.net:27017,ac-4st63nd-shard-00-01.myiaxw1.mongodb.net:27017,ac-4st63nd-shard-00-02.myiaxw1.mongodb.net:27017/shop?replicaSet=atlas-10elfg-shard-0&ssl=true&authSource=admin",
+  uri: MONGO_URI,
   collection: "sessions",
 });
 const fileStorage = multer.diskStorage({
@@ -100,8 +101,6 @@ app.use((error, req, res, next) => {
 });
 
 mongoose
-  .connect(
-    "mongodb://adam:Pknqsx123.@ac-4st63nd-shard-00-00.myiaxw1.mongodb.net:27017,ac-4st63nd-shard-00-01.myiaxw1.mongodb.net:27017,ac-4st63nd-shard-00-02.myiaxw1.mongodb.net:27017/shop?replicaSet=atlas-10elfg-shard-0&ssl=true&authSource=admin"
-  )
-  .then((result) => app.listen(3000))
+  .connect(MONGO_URI)
+  .then((result) => app.listen(process.env.PORT || 3000))
   .catch((error) => console.log(error));

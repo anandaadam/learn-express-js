@@ -5,13 +5,15 @@
   "main": "app.mjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon app.mjs"
+    "start": "set NODE_ENV=production&& set MONGO_USER=adam&& set MONGO_PASSWORD=Pknqsx123.&& set MONGO_DEFAULT_DATABASE=shop&& set STRIPE_KEY=sk_test_51Mx9q3KeFTP0q5eoN9hKg30rDCnDDcczH9FMpiPZFDi8Q2QuMdVHXxKaWrSGRgs2bHnAXRpQjO3Qn6AG0hnQKwYE00fJVa1j55&& node app.mjs",
+    "start:dev": "nodemon app.mjs"
   },
   "author": "Adam Ananda Santoso",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.0",
+    "compression": "^1.7.4",
     "connect-flash": "^0.1.1",
     "connect-mongodb-session": "^3.1.1",
     "csurf": "^1.11.0",
@@ -19,6 +21,7 @@
     "express": "^4.18.1",
     "express-session": "^1.17.3",
     "express-validator": "^6.15.0",
+    "helmet": "^7.0.0",
     "mailtrap": "^3.0.1",
     "mongodb": "^4.10.0",
     "mongoose": "^6.7.2",

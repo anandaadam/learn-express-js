@@ -7,7 +7,7 @@ import { __dirname } from "../helpers/path.mjs";
 import PDFDocument from "pdfkit";
 import Stripe from "stripe";
 
-const stripe = new Stripe("ADD WITH YOUR SECRET KEY");
+const stripe = new Stripe(process.env.STRIPE_KEY);
 const itemPerPage = 1;
 
 const getProducts = (req, res, next) => {
