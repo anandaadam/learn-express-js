@@ -14,6 +14,7 @@ import csurf from "csurf";
 import flash from "connect-flash";
 import multer from "multer";
 import helmet from "helmet";
+import compression from "compression";
 
 const app = express();
 const csrfProtection = csurf();
@@ -48,6 +49,7 @@ app.set("view engine", "ejs");
 app.set("views", "views");
 
 app.use(helmet());
+app.use(compression());
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(
