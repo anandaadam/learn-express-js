@@ -13,6 +13,7 @@ import * as errorHandle from "./controllers/Error.mjs";
 import csurf from "csurf";
 import flash from "connect-flash";
 import multer from "multer";
+import helmet from "helmet";
 
 const app = express();
 const csrfProtection = csurf();
@@ -45,6 +46,8 @@ const fileFilter = (req, file, cb) => {
 
 app.set("view engine", "ejs");
 app.set("views", "views");
+
+app.use(helmet());
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(
