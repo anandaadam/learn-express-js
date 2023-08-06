@@ -1,4 +1,5 @@
 import path from "path";
+import fs from "fs";
 import { __dirname } from "./helpers/path.mjs";
 import express from "express";
 import session from "express-session";
@@ -15,6 +16,7 @@ import flash from "connect-flash";
 import multer from "multer";
 import helmet from "helmet";
 import compression from "compression";
+import morgan from "morgan";
 
 const app = express();
 const csrfProtection = csurf();
@@ -48,13 +50,14 @@ const fileFilter = (req, file, cb) => {
 app.set("view engine", "ejs");
 app.set("views", "views");
 
-app.use(helmet());
+const accessLogStream = fs.createWriteStream(path.join(__dirname, "../", "access.log"), {
+  flags: "a",
+});
 app.use(compression());
+app.use(morgan("combined", { stream: accessLogStream }));
 
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(
-  multer({ storage: fileStorage, fileFilter: fileFilter }).single("image")
-);
+app.use(multer({ storage: fileStorage, fileFilter: fileFilter }).single("image"));
 app.use(express.static(path.join(__dirname, "../", "public")));
 app.use("/images", express.static(path.join(__dirname, "../", "images")));
 app.use(
