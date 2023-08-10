@@ -1,5 +1,6 @@
 import path from "path";
 import fs from "fs";
+import https from "https";
 import { __dirname } from "./helpers/path.mjs";
 import express from "express";
 import session from "express-session";
@@ -26,6 +27,10 @@ const store = new SessionStore({
   uri: MONGO_URI,
   collection: "sessions",
 });
+
+// const privateKey = fs.readFileSync("server.key");
+// const certificate = fs.readFileSync("server.cert");
+
 const fileStorage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "images");
@@ -50,9 +55,11 @@ const fileFilter = (req, file, cb) => {
 app.set("view engine", "ejs");
 app.set("views", "views");
 
-const accessLogStream = fs.createWriteStream(path.join(__dirname, "../", "access.log"), {
-  flags: "a",
-});
+app.use(helmet());
+
+// const accessLogStream = fs.createWriteStream(path.join(__dirname, "../", "access.log"), {
+//   flags: "a",
+// });
 app.use(compression());
 app.use(morgan("combined", { stream: accessLogStream }));
 
@@ -110,5 +117,7 @@ app.use((error, req, res, next) => {
 
 mongoose
   .connect(MONGO_URI)
-  .then((result) => app.listen(process.env.PORT || 3000))
+  .then((result) => {
+    app.listen(process.env.PORT || 3000);
+  })
   .catch((error) => console.log(error));
